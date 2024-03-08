@@ -6,7 +6,7 @@ replicaCount: 1
 
 image:
   repository: hhyo/archery
-  tag: v1.9.1
+  tag: v1.10.0
   pullPolicy: IfNotPresent
 
 nameOverride: ""
@@ -32,7 +32,7 @@ ingress:
   servicePort: 9123
 
   hosts:
-    - dba.archery.local
+    - sql.dev.jzterp.net
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:
@@ -41,11 +41,11 @@ ingress:
 
 # subcharts redis
 redis:
-  embedded: true
-  # url: "redis://127.0.0.1:6379/0"
+  embedded: false
+  url: "redis://10.6.5.117:30379/5"
   # urlSecret: ""
   # urlSecretKey: "CACHE_URL"
-  # dingdingUrl: "redis://127.0.0.1:6379/1"
+  dingdingUrl: "redis://10.6.5.117:30379/6"
   # dingdingUrlSecret: ""
   # dingdingUrlSecretKey: "DINGDING_CACHE_URL"
   # embedded 为 false, 会使用外部的 redis, 下方的 redis 就不会生效
@@ -60,15 +60,15 @@ redis:
 
 # subcharts mysql
 mysql:
-  embedded: true
-  # url: "mysql://root:@127.0.0.1:3306/archery"
+  embedded: false
+  url: "mysql://root:jzt600998@10.6.5.141:3306/archery"
   # urlSecret: ""
   # urlSecretKey: "DATABASE_URL"
   # embedded 为 false时, 会使用外部的 mysql, 下方的 mysql 配置不会生效
   architecture: standalone
   auth:
     database: archery
-    rootPassword: "MYSQL_ROOT_PASSWORD"
+    rootPassword: "jzt600998"
   primary:
     configuration: |-
       [mysqld]
@@ -266,10 +266,10 @@ configMap:
         DIR="$( cd "$( dirname "$0"  )" && pwd  )"
         cd $DIR
         #配置archery数据库的连接地址
-        monitor_db_host="archery-mysql"
+        monitor_db_host="10.6.5.141"
         monitor_db_port=3306
         monitor_db_user="root"
-        monitor_db_password="MYSQL_ROOT_PASSWORD"
+        monitor_db_password="jzt600998"
         monitor_db_database="archery"
         #实例慢日志位置
         slowquery_file="/home/mysql/log_slow.log"
