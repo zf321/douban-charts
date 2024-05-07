@@ -12,10 +12,10 @@ nameOverride: ""
 fullnameOverride: ""
 
 global:
-  host: "chart-example.local"
+  host: "dify.dev.jztweb.com"
   # Change this is your ingress is exposed with port other than 443, 80, like 8080 for instance
   port: ""
-  enableTLS: false
+  enableTLS: true
   image:
     tag: ""
   edition: "SELF_HOSTED"
@@ -29,16 +29,53 @@ global:
   # * api
   # * worker
   extraBackendEnvs:
+  - name: DB_USERNAME
+    value: "dify"
+  # it is adviced to use secret to manage you sensitive info including password
+  - name: DB_PASSWORD
+    value: dify
+  - name: DB_HOST
+    value: "postgres"
+  - name: DB_PORT
+    value: "5432"
+  - name: DB_DATABASE
+    value: dify
+  - name: REDIS_HOST
+    value: "10.6.5.117"
+  - name: REDIS_PORT
+    value: "30379"
+  - name: REDIS_DB
+    value: "1"
+  # it is adviced to use secret to manage you sensitive info including password
+  - name: REDIS_PASSWORD
+    value: 
+  - name: CELERY_BROKER_URL
+    value: redis://10.6.5.117:30379/1
+  - name: S3_ENDPOINT
+    value: "https://minio-api.prod.jztweb.com"
+  - name: S3_BUCKET_NAME
+    value: "dify"
+  # it is adviced to use secret to manage you sensitive info including password
+  - name: S3_ACCESS_KEY
+    value: "dify"
+  - name: S3_SECRET_KEY
+    value: "dify_dify"
   # SECRET_KEY is a must, check https://docs.dify.ai/getting-started/install-self-hosted/environments#secret_key for detail
   # read more on the readme page for secret ref
   - name: SECRET_KEY
-    value: "PleaseReplaceThisToYourSecretOrUse"
+    value: "k7gkQstsdPttzZ9adWGwojsWOKkIDoYw/+TdWJjN/G8bXe4xZzuQ3tsv"
   # use secretRef to protect your secret
   # - name: SECRET_KEY
   #   valueFrom:
   #     secretKeyRef:
   #       name: dify
   #       key: SECRET_KEY
+  - name: VECTOR_STORE
+    value: "weaviate"
+  - name: WEAVIATE_ENDPOINT
+    value: "https://jzt-t95ojmb7.weaviate.network"
+  - name: WEAVIATE_API_KEY
+    value: ""
 
 ingress:
   enabled: false
@@ -46,7 +83,7 @@ ingress:
   annotations:
     # kubernetes.io/ingress.class: nginx
     # kubernetes.io/tls-acme: "true"
-  tlsSecretName: "dify-tls"
+  # tlsSecretName: "dify-tls"
 
 serviceAccount:
   # Specifies whether a service account should be created
@@ -84,7 +121,7 @@ frontend:
 
   service:
     type: ClusterIP
-    port: 80
+    port: 3000
 
   containerPort: 3000
 
@@ -180,7 +217,7 @@ api:
 
   service:
     type: ClusterIP
-    port: 80
+    port: 5001
 
   containerPort: 5001
 
@@ -316,7 +353,7 @@ sandbox:
 
   service:
     type: ClusterIP
-    port: 80
+    port: 8194
 
   containerPort: 8194
 
@@ -370,16 +407,16 @@ redis:
   # using embedded redis
   # connection info would be set automatically
   # best to use external redis if you have one
-  embedded: true
-  # embedded: false
-  # url: "redis://127.0.0.1:6379/0"
+  # embedded: true
+  embedded: false
+  url: "redis://redis-master:6379/0"
   # urlSecret: ""
   # urlSecretKey: "CACHE_URL"
   # please consult to chart manual if you want to change it.
   # https://artifacthub.io/packages/helm/bitnami/redis
   architecture: standalone
-  auth:
-    password: "REDIS_PASSWORD"
+  # auth:
+    # password: "REDIS_PASSWORD"
   master:
     persistence:
       enabled: false
@@ -390,12 +427,12 @@ postgresql:
   # connection info would be set automatically
   # best to use external pg if you have one
   # setting embedded to false and set pg url in envrionment variable
-  embedded: true
-  # embedded: false
+  # embedded: true
+  embedded: false
   # goto extraBackendEnvs to set pg url
   architecture: standalone
   auth:
-    postgresPassword: "testpassword"
+    postgresPassword: "dify"
     database: "dify"
   primary:
     persistence:

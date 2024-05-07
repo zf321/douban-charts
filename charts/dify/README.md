@@ -37,7 +37,8 @@ minio:
 ```
 # install it
 helm repo add douban https://douban.github.io/charts/
-helm upgrade dify douban/dify -f values.yaml --install --debug
+helm upgrade dify douban/dify -f values.yaml --install --debug  
+helm   install dify . -n wotu-ai --kube-insecure-skip-tls-verify
 ```
 **Must** run db migration after installation, or the instance would not work.
 ```
